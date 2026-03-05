@@ -1,0 +1,60 @@
+//
+//  main.cpp
+//  Province
+//
+//  Created by Xiaochuan Chan on 2026/3/5.
+//
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<vector<int>> isconnected;
+vector<int> N;
+int temp[205][205];
+int fat[40001];
+int Find(int i) {
+    if(fat[i]==i)
+        return fat[i];
+    else
+        return Find(fat[i]);
+}
+void merge(int a, int b) {
+    int fa = Find(a);
+    int fb = Find(b);
+    if(fa == fb) return;
+    else fat[fa]=fb;
+}
+unsigned long findCircleNum(vector<vector<int>>& isConnected) {
+    for (int i = 0; i < isConnected.size(); i++) fat[i] = i;
+    unsigned long maxn = isConnected.size(), num = 0;
+    for (int i = 0; i < maxn; i++) {
+        for (int j = i + 1; j < maxn; j++) {
+            if (isConnected[i][j] == 1) {
+                merge(j, i);
+            }
+        }
+    }
+    for (int i = 0; i < maxn; i++) {
+        if (fat[i] == i) num++;
+    }
+    return num;
+}
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cin >> temp[i][j];
+        }
+    }
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            N.push_back(temp[i][j]);
+        }
+        isconnected.push_back(N);
+        N.clear();
+    }
+    cout << findCircleNum(isconnected) << endl;
+    return 0;
+}
